@@ -834,5 +834,19 @@
     "publicByDefault": "Публичные промпты по умолчанию",
     "publicByDefaultDescription": "При сохранении промптов через MCP делать их публичными по умолчанию вместо приватных.",
     "settingUpdated": "Настройка обновлена"
+  },
+  "metadata": {
+    "home": {
+      "title": "{siteName} — The Social Platform for AI Prompts",
+      "description": "{siteDescription}"
+    },
+    "categoryTitle": "{name} — {siteName}",
+    "categoryDescription": "Browse prompts in {name}",
+    "tagTitle": "{name} — {siteName}",
+    "tagDescription": "Browse prompts tagged with {name}",
+    "promptTitle": "{title} — {siteName}",
+    "promptDescription": "View the prompt \"{title}\"",
+    "userTitle": "{displayName} (@{username}) — {siteName}",
+    "userDescription": "Explore prompts and contributions from {displayName}"
   }
 }

@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -5,6 +6,7 @@ import { ArrowLeft, Tag } from "lucide-react";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import config from "@/../prompts.config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
 import { PromptCard } from "@/components/prompts/prompt-card";
 import { McpServerPopup } from "@/components/mcp/mcp-server-popup";
@@ -14,19 +16,31 @@ interface TagPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-export async function generateMetadata({ params }: TagPageProps) {
+export async function generateMetadata({ params, searchParams }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const { page: pageParam } = await searchParams;
+  const tMetadata = await getTranslations("metadata");
+  const tNotFound = await getTranslations("notFound");
   const tag = await db.tag.findUnique({
     where: { slug },
     select: { name: true },
   });
 
-  if (!tag) return { title: "Tag Not Found" };
+  if (!tag)
+    return {
+      title: tNotFound("title"),
+      description: tNotFound("description"),
+    };
 
-  return {
-    title: `${tag.name} - Tags`,
-    description: `Browse prompts tagged with ${tag.name}`,
-  };
+  const title = tMetadata("tagTitle", { name: tag.name, siteName: config.branding.name });
+  const description = tMetadata("tagDescription", { name: tag.name });
+  const search = pageParam ? `?page=${pageParam}` : "";
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: `/tags/${slug}${search}`,
+  });
 }
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {

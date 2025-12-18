@@ -7,6 +7,8 @@ import { Calendar, Clock, Copy, Share2, Edit, History, GitPullRequest, Check, X,
 import { ShareDropdown } from "@/components/prompts/share-dropdown";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getConfig } from "@/lib/config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -44,19 +46,30 @@ function extractPromptId(idParam: string): string {
 export async function generateMetadata({ params }: PromptPageProps): Promise<Metadata> {
   const { id: idParam } = await params;
   const id = extractPromptId(idParam);
+  const tMetadata = await getTranslations("metadata");
+  const tNotFound = await getTranslations("notFound");
+  const config = await getConfig();
   const prompt = await db.prompt.findUnique({
     where: { id },
-    select: { title: true, description: true },
+    select: { title: true, description: true, mediaUrl: true },
   });
 
   if (!prompt) {
-    return { title: "Prompt Not Found" };
+    return {
+      title: tNotFound("title"),
+      description: tNotFound("description"),
+    };
   }
 
-  return {
-    title: prompt.title,
-    description: prompt.description || `View the prompt: ${prompt.title}`,
-  };
+  const title = tMetadata("promptTitle", { title: prompt.title, siteName: config.branding.name });
+  const description = prompt.description || tMetadata("promptDescription", { title: prompt.title });
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: `/prompts/${idParam}`,
+    image: prompt.mediaUrl ? { url: prompt.mediaUrl } : undefined,
+  });
 }
 
 export default async function PromptPage({ params }: PromptPageProps) {

@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import config from "@/../prompts.config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
 import { PromptList } from "@/components/prompts/prompt-list";
 import { SubscribeButton } from "@/components/categories/subscribe-button";
@@ -17,19 +18,30 @@ interface CategoryPageProps {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const tMetadata = await getTranslations("metadata");
+  const tNotFound = await getTranslations("notFound");
   const category = await db.category.findUnique({
     where: { slug },
     select: { name: true, description: true },
   });
 
   if (!category) {
-    return { title: "Category Not Found" };
+    return {
+      title: tNotFound("title"),
+      description: tNotFound("description"),
+    };
   }
 
-  return {
-    title: category.name,
-    description: category.description || `Browse prompts in ${category.name}`,
-  };
+  const title = tMetadata("categoryTitle", { name: category.name, siteName: config.branding.name });
+  const description = category.description
+    ? category.description
+    : tMetadata("categoryDescription", { name: category.name });
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: `/categories/${slug}`,
+  });
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

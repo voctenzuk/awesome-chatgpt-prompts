@@ -8,6 +8,7 @@ import { Calendar, ArrowBigUp, FileText, Settings, GitPullRequest, Clock, Check,
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import config from "@/../prompts.config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,30 +23,53 @@ interface UserProfilePageProps {
   searchParams: Promise<{ page?: string; tab?: string }>;
 }
 
-export async function generateMetadata({ params }: UserProfilePageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: UserProfilePageProps): Promise<Metadata> {
   const { username: rawUsername } = await params;
+  const { page: pageParam, tab } = await searchParams;
+  const tMetadata = await getTranslations("metadata");
+  const tNotFound = await getTranslations("notFound");
   const decodedUsername = decodeURIComponent(rawUsername);
-  
+
   // Only support /@username format
   if (!decodedUsername.startsWith("@")) {
-    return { title: "User Not Found" };
+    return {
+      title: tNotFound("title"),
+      description: tNotFound("description"),
+    };
   }
-  
+
   const username = decodedUsername.slice(1);
-    
+
   const user = await db.user.findUnique({
     where: { username },
     select: { name: true, username: true },
   });
 
   if (!user) {
-    return { title: "User Not Found" };
+    return {
+      title: tNotFound("title"),
+      description: tNotFound("description"),
+    };
   }
 
-  return {
-    title: `${user.name || user.username} (@${user.username})`,
-    description: `View ${user.name || user.username}'s prompts`,
-  };
+  const displayName = user.name || user.username;
+  const title = tMetadata("userTitle", {
+    displayName,
+    username: user.username,
+    siteName: config.branding.name,
+  });
+  const description = tMetadata("userDescription", { displayName });
+
+  const search = new URLSearchParams();
+  if (tab) search.set("tab", tab);
+  if (pageParam) search.set("page", pageParam);
+  const query = search.toString();
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: `/@${user.username}${query ? `?${query}` : ""}`,
+  });
 }
 
 export default async function UserProfilePage({ params, searchParams }: UserProfilePageProps) {
