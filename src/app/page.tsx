@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import { ArrowRight, Star, Heart, Trophy, Users, HeartHandshake, Code, Lock, Building2, Github, GraduationCap } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getConfig } from "@/lib/config";
 import { buildLocalizedMetadata } from "@/lib/metadata";
+import { buildLocalizedUrl } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { DiscoveryPrompts } from "@/components/prompts/discovery-prompts";
 import { HeroPromptInput } from "@/components/prompts/hero-prompt-input";
@@ -37,8 +39,44 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const tHomepage = await getTranslations("homepage");
   const tNav = await getTranslations("nav");
+  const locale = await getLocale();
   const session = await auth();
   const config = await getConfig();
+  const headersList = headers();
+  const siteUrl = buildLocalizedUrl("/", locale, headersList);
+  const logoUrl = buildLocalizedUrl(config.branding.logo, locale, headersList);
+  const logoDarkUrl = buildLocalizedUrl(config.branding.logoDark || config.branding.logo, locale, headersList);
+  const organizationImageUrls = logoDarkUrl === logoUrl ? [logoUrl] : [logoUrl, logoDarkUrl];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}#organization`,
+        name: config.branding.name,
+        url: siteUrl,
+        logo: {
+          "@type": "ImageObject",
+          url: logoUrl,
+        },
+        image: organizationImageUrls,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}#website`,
+        url: siteUrl,
+        name: config.branding.name,
+        publisher: {
+          "@id": `${siteUrl}#organization`,
+        },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: buildLocalizedUrl("/prompts?q={search_term_string}", locale, headersList),
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
   
   const isOAuth = config.auth.provider !== "credentials";
   // Show register button only for non-logged-in users
@@ -66,6 +104,11 @@ export default async function HomePage() {
   // Show landing page for all users
   return (
     <div className="flex flex-col">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       {/* Hero Section */}
       <section className="relative py-12 md:py-16 border-b overflow-hidden">
         {/* Background - Right Side */}
