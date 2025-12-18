@@ -267,7 +267,11 @@
     "translateToLanguage": "ترجم إلى لغتك",
     "translated": "تمت ترجمة المحتوى",
     "translationFailed": "فشلت الترجمة",
-    "alreadyTranslated": "مترجم بالفعل"
+    "alreadyTranslated": "مترجم بالفعل",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "طلبات التغيير",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "الأكثر تصويتاً اليوم",
     "latestPrompts": "أحدث الأوامر",
     "recentlyUpdated": "المحدثة مؤخراً",
-    "mostContributed": "الأكثر مساهمة"
+    "mostContributed": "الأكثر مساهمة",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "المنصة الاجتماعية لـ",

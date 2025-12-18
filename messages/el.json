@@ -267,7 +267,11 @@
     "translateToLanguage": "Μετάφραση στη γλώσσα σας",
     "translated": "Το περιεχόμενο μεταφράστηκε",
     "translationFailed": "Η μετάφραση απέτυχε",
-    "alreadyTranslated": "Ήδη μεταφρασμένο"
+    "alreadyTranslated": "Ήδη μεταφρασμένο",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "Αιτήσεις αλλαγής",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "Τα πιο ψηφισμένα σήμερα",
     "latestPrompts": "Τελευταία Prompts",
     "recentlyUpdated": "Πρόσφατα ενημερωμένα",
-    "mostContributed": "Περισσότερες συνεισφορές"
+    "mostContributed": "Περισσότερες συνεισφορές",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "Η κοινωνική πλατφόρμα για",
