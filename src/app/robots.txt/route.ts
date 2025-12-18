@@ -1,16 +1,8 @@
 import type { MetadataRoute } from "next";
-import { metadata } from "@/app/layout";
-
-function getBaseUrl(): URL {
-  if (metadata.metadataBase) {
-    return metadata.metadataBase as URL;
-  }
-
-  return new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
-}
+import { METADATA_BASE } from "@/app/layout";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = getBaseUrl();
+  const baseUrl = METADATA_BASE;
   const sitemapUrl = new URL("/sitemap.xml", baseUrl).toString();
 
   return {

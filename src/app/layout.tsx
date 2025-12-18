@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
-import { getMessages, getLocale } from "next-intl/server";
+import { getMessages, getLocale, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -9,6 +9,8 @@ import { LocaleDetector } from "@/components/providers/locale-detector";
 import { getConfig } from "@/lib/config";
 import { isRtlLocale } from "@/lib/i18n/config";
 import "./globals.css";
+
+export const METADATA_BASE = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,28 +23,42 @@ const notoSansArabic = Noto_Sans_Arabic({
   weight: ["400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
-  title: "prompts.chat",
-  description: "Collect, organize, and share AI prompts",
-  icons: {
-    icon: [
-      { url: "/logo.svg", media: "(prefers-color-scheme: light)" },
-      { url: "/logo-dark.svg", media: "(prefers-color-scheme: dark)" },
-    ],
-  },
-  openGraph: {
-    title: "prompts.chat",
-    description: "Collect, organize, and share AI prompts",
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "prompts.chat",
-    description: "Collect, organize, and share AI prompts",
-    images: ["/og.png"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [config, t] = await Promise.all([getConfig(), getTranslations("metadata")]);
+
+  const title = t("home.title", { siteName: config.branding.name });
+  const description = t("home.description", {
+    siteName: config.branding.name,
+    siteDescription: config.branding.description,
+  });
+
+  const logo = config.branding.logo;
+  const darkLogo = config.branding.logoDark || logo;
+
+  return {
+    metadataBase: METADATA_BASE,
+    title,
+    description,
+    icons: {
+      icon: [
+        { url: logo, media: "(prefers-color-scheme: light)" },
+        { url: darkLogo, media: "(prefers-color-scheme: dark)" },
+      ],
+    },
+    openGraph: {
+      title,
+      description,
+      images: [{ url: "/og.png", width: 1200, height: 630 }],
+      siteName: config.branding.name,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
+  };
+}
 
 const radiusValues = {
   none: "0",
