@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfinitePromptList } from "@/components/prompts/infinite-prompt-list";
@@ -11,6 +12,8 @@ import { McpServerPopup, McpIcon } from "@/components/mcp/mcp-server-popup";
 import { db } from "@/lib/db";
 import { isAISearchEnabled, semanticSearch } from "@/lib/ai/embeddings";
 import { isAIGenerationEnabled } from "@/lib/ai/generation";
+import { buildBaseUrl, buildLocalizedUrl } from "@/lib/seo";
+import { getPromptUrl } from "@/lib/urls";
 import config from "@/../prompts.config";
 
 export const metadata: Metadata = {
@@ -33,6 +36,10 @@ interface PromptsPageProps {
 export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   const t = await getTranslations("prompts");
   const tSearch = await getTranslations("search");
+  const locale = await getLocale();
+  const headersList = headers();
+  const baseUrl = buildBaseUrl(headersList);
+  const buildUrl = (path: string) => buildLocalizedUrl(path, locale, headersList);
   const params = await searchParams;
   
   const perPage = 12;
@@ -172,8 +179,68 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
     orderBy: { name: "asc" },
   });
 
+  const toAbsoluteAssetUrl = (path?: string | null) => {
+    if (!path) return undefined;
+    if (/^https?:\/\//i.test(path)) return path;
+    return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  };
+
+  const creativeWorks = prompts.map((promptItem) => ({
+    "@type": "CreativeWork",
+    name: promptItem.title,
+    description: promptItem.description ?? undefined,
+    url: buildUrl(getPromptUrl(promptItem.id, promptItem.slug)),
+    author: {
+      "@type": "Person",
+      name: promptItem.author.name || promptItem.author.username,
+      url: buildUrl(`/@${promptItem.author.username}`),
+    },
+    inLanguage: locale,
+    datePublished: promptItem.createdAt ? new Date(promptItem.createdAt).toISOString() : undefined,
+    dateModified: promptItem.updatedAt
+      ? new Date(promptItem.updatedAt).toISOString()
+      : promptItem.createdAt
+        ? new Date(promptItem.createdAt).toISOString()
+        : undefined,
+  }));
+
+  const breadcrumbList = {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: config.branding.name,
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t("title"),
+        item: buildUrl("/prompts"),
+      },
+    ],
+  };
+
+  const organization = {
+    "@type": "Organization",
+    name: config.branding.name,
+    url: baseUrl,
+    description: config.branding.description,
+    logo: toAbsoluteAssetUrl(config.branding.logo || "/logo.svg"),
+  };
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [organization, breadcrumbList, ...creativeWorks],
+  };
+
   return (
     <div className="container py-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <div className="flex items-baseline gap-2">
           <h1 className="text-lg font-semibold">{t("title")}</h1>
