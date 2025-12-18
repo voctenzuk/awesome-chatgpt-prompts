@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
+import { headers } from "next/headers";
 import { formatDistanceToNow } from "@/lib/date";
 import { Calendar, Clock, Copy, Share2, Edit, History, GitPullRequest, Check, X, Users, ImageIcon, Video, FileText, Shield } from "lucide-react";
 import { ShareDropdown } from "@/components/prompts/share-dropdown";
@@ -23,6 +24,9 @@ import { UnlistPromptButton } from "@/components/prompts/unlist-prompt-button";
 import { MediaPreview } from "@/components/prompts/media-preview";
 import { ReportPromptDialog } from "@/components/prompts/report-prompt-dialog";
 import { DelistBanner } from "@/components/prompts/delist-banner";
+import { buildBaseUrl, buildLocalizedUrl } from "@/lib/seo";
+import { getPromptUrl } from "@/lib/urls";
+import config from "@/../prompts.config";
 
 interface PromptPageProps {
   params: Promise<{ id: string }>;
@@ -180,8 +184,77 @@ export default async function PromptPage({ params }: PromptPageProps) {
   const delistReason = (prompt as { delistReason?: string | null }).delistReason as
     | "TOO_SHORT" | "NOT_ENGLISH" | "LOW_QUALITY" | "NOT_LLM_INSTRUCTION" | "MANUAL" | null;
 
+  const headersList = headers();
+  const baseUrl = buildBaseUrl(headersList);
+  const buildUrl = (path: string) => buildLocalizedUrl(path, locale, headersList);
+  const promptUrl = buildUrl(getPromptUrl(prompt.id, prompt.slug));
+  const toAbsoluteAssetUrl = (path?: string | null) => {
+    if (!path) return undefined;
+    if (/^https?:\/\//i.test(path)) return path;
+    return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  };
+
+  const breadcrumbList = {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: config.branding.name,
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t("title"),
+        item: buildUrl("/prompts"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: prompt.title,
+        item: promptUrl,
+      },
+    ],
+  };
+
+  const organization = {
+    "@type": "Organization",
+    name: config.branding.name,
+    url: baseUrl,
+    description: config.branding.description,
+    logo: toAbsoluteAssetUrl(config.branding.logo || "/logo.svg"),
+  };
+
+  const creativeWork = {
+    "@type": "CreativeWork",
+    name: prompt.title,
+    description: prompt.description ?? undefined,
+    url: promptUrl,
+    author: {
+      "@type": "Person",
+      name: prompt.author.name || prompt.author.username,
+      url: buildUrl(`/@${prompt.author.username}`),
+    },
+    publisher: organization,
+    inLanguage: locale,
+    datePublished: new Date(prompt.createdAt).toISOString(),
+    dateModified: new Date(prompt.updatedAt || prompt.createdAt).toISOString(),
+    keywords: prompt.tags.map(({ tag }) => tag.name),
+    image: toAbsoluteAssetUrl(prompt.mediaUrl),
+  };
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [organization, breadcrumbList, creativeWork],
+  };
+
   return (
     <div className="container max-w-4xl py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Delist Banner - shown to owner and admins when prompt is delisted */}
       {prompt.isUnlisted && delistReason && (isOwner || isAdmin) && (
         <DelistBanner
