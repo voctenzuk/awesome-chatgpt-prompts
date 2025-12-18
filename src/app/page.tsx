@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
 import { ArrowRight, Star, Heart, Trophy, Users, HeartHandshake, Code, Lock, Building2, Github, GraduationCap } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getConfig } from "@/lib/config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
 import { DiscoveryPrompts } from "@/components/prompts/discovery-prompts";
 import { HeroPromptInput } from "@/components/prompts/hero-prompt-input";
@@ -12,6 +14,24 @@ function getOrdinalSuffix(n: number): string {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;
   return s[(v - 20) % 10] || s[v] || s[0];
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  const config = await getConfig();
+
+  const title = t("home.title", { siteName: config.branding.name });
+  const description = t("home.description", {
+    siteName: config.branding.name,
+    siteDescription: config.branding.description,
+  });
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: "/",
+    image: { url: "/og.png", width: 1200, height: 630 },
+  });
 }
 
 export default async function HomePage() {

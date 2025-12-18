@@ -834,5 +834,19 @@
     "publicByDefault": "默认公开提示词",
     "publicByDefaultDescription": "通过 MCP 保存提示词时，默认设为公开而非私有。",
     "settingUpdated": "设置已更新"
+  },
+  "metadata": {
+    "home": {
+      "title": "{siteName} — The Social Platform for AI Prompts",
+      "description": "{siteDescription}"
+    },
+    "categoryTitle": "{name} — {siteName}",
+    "categoryDescription": "Browse prompts in {name}",
+    "tagTitle": "{name} — {siteName}",
+    "tagDescription": "Browse prompts tagged with {name}",
+    "promptTitle": "{title} — {siteName}",
+    "promptDescription": "View the prompt \"{title}\"",
+    "userTitle": "{displayName} (@{username}) — {siteName}",
+    "userDescription": "Explore prompts and contributions from {displayName}"
   }
 }
