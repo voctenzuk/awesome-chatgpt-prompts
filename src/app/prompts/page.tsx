@@ -8,18 +8,28 @@ import { InfinitePromptList } from "@/components/prompts/infinite-prompt-list";
 import { PromptFilters } from "@/components/prompts/prompt-filters";
 import { FilterProvider } from "@/components/prompts/filter-context";
 import { HFDataStudioDropdown } from "@/components/prompts/hf-data-studio-dropdown";
-import { McpServerPopup, McpIcon } from "@/components/mcp/mcp-server-popup";
+import { McpServerPopup } from "@/components/mcp/mcp-server-popup";
 import { db } from "@/lib/db";
 import { isAISearchEnabled, semanticSearch } from "@/lib/ai/embeddings";
 import { isAIGenerationEnabled } from "@/lib/ai/generation";
+import { getConfig } from "@/lib/config";
+import { buildLocalizedMetadata } from "@/lib/metadata";
 import { buildBaseUrl, buildLocalizedUrl } from "@/lib/seo";
 import { getPromptUrl } from "@/lib/urls";
-import config from "@/../prompts.config";
 
-export const metadata: Metadata = {
-  title: "Prompts",
-  description: "Browse and discover AI prompts",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("prompts.metadata");
+  const config = await getConfig();
+
+  const title = t("title", { siteName: config.branding.name });
+  const description = t("description", { siteName: config.branding.name });
+
+  return buildLocalizedMetadata({
+    title,
+    description,
+    path: "/prompts",
+  });
+}
 
 interface PromptsPageProps {
   searchParams: Promise<{
@@ -34,6 +44,7 @@ interface PromptsPageProps {
 }
 
 export default async function PromptsPage({ searchParams }: PromptsPageProps) {
+  const config = await getConfig();
   const t = await getTranslations("prompts");
   const tSearch = await getTranslations("search");
   const locale = await getLocale();

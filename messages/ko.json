@@ -267,7 +267,11 @@
     "translateToLanguage": "내 언어로 번역",
     "translated": "콘텐츠가 번역됨",
     "translationFailed": "번역 실패",
-    "alreadyTranslated": "이미 번역됨"
+    "alreadyTranslated": "이미 번역됨",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "변경 요청",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "오늘의 인기",
     "latestPrompts": "최신 프롬프트",
     "recentlyUpdated": "최근 업데이트",
-    "mostContributed": "가장 많은 기여"
+    "mostContributed": "가장 많은 기여",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "소셜 플랫폼",

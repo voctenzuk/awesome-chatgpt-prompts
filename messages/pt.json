@@ -267,7 +267,11 @@
     "translateToLanguage": "Traduzir para o seu idioma",
     "translated": "Conteúdo traduzido",
     "translationFailed": "Falha na tradução",
-    "alreadyTranslated": "Já traduzido"
+    "alreadyTranslated": "Já traduzido",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "Solicitações de Alteração",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "Mais Votados de Hoje",
     "latestPrompts": "Prompts Recentes",
     "recentlyUpdated": "Atualizados Recentemente",
-    "mostContributed": "Mais Contribuídos"
+    "mostContributed": "Mais Contribuídos",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "A Plataforma Social para",

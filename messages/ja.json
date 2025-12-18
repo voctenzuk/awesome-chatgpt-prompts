@@ -267,7 +267,11 @@
     "translateToLanguage": "あなたの言語に翻訳",
     "translated": "コンテンツを翻訳しました",
     "translationFailed": "翻訳に失敗しました",
-    "alreadyTranslated": "翻訳済み"
+    "alreadyTranslated": "翻訳済み",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "変更リクエスト",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "今日最も投票された",
     "latestPrompts": "最新のプロンプト",
     "recentlyUpdated": "最近更新",
-    "mostContributed": "最も貢献されたプロンプト"
+    "mostContributed": "最も貢献されたプロンプト",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "AIプロンプトの",

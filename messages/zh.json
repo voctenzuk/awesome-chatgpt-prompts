@@ -267,7 +267,11 @@
     "translateToLanguage": "翻译成你的语言",
     "translated": "内容已翻译",
     "translationFailed": "翻译失败",
-    "alreadyTranslated": "已翻译"
+    "alreadyTranslated": "已翻译",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "变更请求",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "今日最热",
     "latestPrompts": "最新提示词",
     "recentlyUpdated": "最近更新",
-    "mostContributed": "贡献最多"
+    "mostContributed": "贡献最多",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "AI 提示词的",

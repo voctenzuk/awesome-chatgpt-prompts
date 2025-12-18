@@ -267,7 +267,11 @@
     "translateToLanguage": "Перевести на ваш язык",
     "translated": "Контент переведён",
     "translationFailed": "Ошибка перевода",
-    "alreadyTranslated": "Уже переведено"
+    "alreadyTranslated": "Уже переведено",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "Запросы на изменение",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "Самые популярные за сегодня",
     "latestPrompts": "Новейшие промпты",
     "recentlyUpdated": "Недавно обновленные",
-    "mostContributed": "С наибольшим числом вкладов"
+    "mostContributed": "С наибольшим числом вкладов",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "Социальная платформа для",

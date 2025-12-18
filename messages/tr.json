@@ -267,7 +267,11 @@
     "translateToLanguage": "Dilinize çevirin",
     "translated": "İçerik çevrildi",
     "translationFailed": "Çeviri başarısız oldu",
-    "alreadyTranslated": "Zaten çevrildi"
+    "alreadyTranslated": "Zaten çevrildi",
+    "metadata": {
+      "title": "{siteName} Prompts",
+      "description": "Browse and discover AI prompts on {siteName}."
+    }
   },
   "changeRequests": {
     "title": "Değişiklik İstekleri",
@@ -666,7 +670,11 @@
     "todaysMostUpvoted": "Bugün En Çok Oy Alanlar",
     "latestPrompts": "En Son Promptlar",
     "recentlyUpdated": "Son Güncellenenler",
-    "mostContributed": "En Çok Katkı Alanlar"
+    "mostContributed": "En Çok Katkı Alanlar",
+    "metadata": {
+      "title": "Discover Prompts on {siteName}",
+      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+    }
   },
   "homepage": {
     "heroTitle": "AI Promptları için",
