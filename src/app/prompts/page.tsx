@@ -3,12 +3,14 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { Plus } from "lucide-react";
+import type { Prisma } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { InfinitePromptList } from "@/components/prompts/infinite-prompt-list";
 import { PromptFilters } from "@/components/prompts/prompt-filters";
 import { FilterProvider } from "@/components/prompts/filter-context";
 import { HFDataStudioDropdown } from "@/components/prompts/hf-data-studio-dropdown";
 import { McpServerPopup } from "@/components/mcp/mcp-server-popup";
+import type { PromptCardProps } from "@/components/prompts/prompt-card";
 import { db } from "@/lib/db";
 import { isAISearchEnabled, semanticSearch } from "@/lib/ai/embeddings";
 import { isAIGenerationEnabled } from "@/lib/ai/generation";
@@ -54,20 +56,29 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   const params = await searchParams;
   
   const perPage = 12;
+  const pageParam = Number(params.page);
+  const pageNumber = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const offset = (pageNumber - 1) * perPage;
   const aiSearchAvailable = await isAISearchEnabled();
   const aiGenerationAvailable = await isAIGenerationEnabled();
   const useAISearch = aiSearchAvailable && params.ai === "1" && params.q;
 
-  let prompts: any[] = [];
+  type PromptListItem = PromptCardProps["prompt"] & { updatedAt?: Date | null };
+
+  let prompts: PromptListItem[] = [];
   let total = 0;
 
   if (useAISearch && params.q) {
     // Use AI semantic search
     try {
-      const aiResults = await semanticSearch(params.q, perPage);
-      prompts = aiResults.map((p) => ({
+      const aiResults = await semanticSearch(params.q, perPage * pageNumber);
+      const pagedResults = aiResults.slice(offset, offset + perPage);
+      prompts = pagedResults.map((p) => ({
         ...p,
+        slug: null,
+        updatedAt: null,
         contributorCount: 0,
+        contributors: [],
       }));
       total = aiResults.length;
     } catch {
@@ -112,7 +123,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
     
     // Build order by clause
     const isUpvoteSort = params.sort === "upvotes";
-    let orderBy: any = { createdAt: "desc" };
+    let orderBy: Prisma.PromptOrderByWithRelationInput = { createdAt: "desc" };
     if (params.sort === "oldest") {
       orderBy = { createdAt: "asc" };
     } else if (isUpvoteSort) {
@@ -125,7 +136,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
       db.prompt.findMany({
         where,
         orderBy,
-        skip: 0,
+        skip: offset,
         take: perPage,
         include: {
           author: {
@@ -215,6 +226,17 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
         : undefined,
   }));
 
+  const listPageUrl = buildUrl(pageNumber > 1 ? `/prompts?page=${pageNumber}` : "/prompts");
+
+  const itemList = {
+    "@type": "ItemList",
+    itemListElement: prompts.map((promptItem, index) => ({
+      "@type": "ListItem",
+      position: offset + index + 1,
+      url: buildUrl(getPromptUrl(promptItem.id, promptItem.slug)),
+    })),
+  };
+
   const breadcrumbList = {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -228,7 +250,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
         "@type": "ListItem",
         position: 2,
         name: t("title"),
-        item: buildUrl("/prompts"),
+        item: listPageUrl,
       },
     ],
   };
@@ -243,7 +265,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
 
   const structuredData = {
     "@context": "https://schema.org",
-    "@graph": [organization, breadcrumbList, ...creativeWorks],
+    "@graph": [organization, breadcrumbList, itemList, ...creativeWorks],
   };
 
   return (
