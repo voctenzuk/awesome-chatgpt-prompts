@@ -269,8 +269,8 @@
     "translationFailed": "Ошибка перевода",
     "alreadyTranslated": "Уже переведено",
     "metadata": {
-      "title": "{siteName} Prompts",
-      "description": "Browse and discover AI prompts on {siteName}."
+      "title": "Промпты {siteName}",
+      "description": "Ищите и открывайте AI-промпты на {siteName}."
     }
   },
   "changeRequests": {
@@ -672,8 +672,8 @@
     "recentlyUpdated": "Недавно обновленные",
     "mostContributed": "С наибольшим числом вкладов",
     "metadata": {
-      "title": "Discover Prompts on {siteName}",
-      "description": "Explore featured, trending, and recently updated prompts on {siteName}."
+      "title": "Открывайте промпты на {siteName}",
+      "description": "Изучайте избранные, популярные и недавно обновленные промпты на {siteName}."
     }
   },
   "homepage": {
@@ -845,16 +845,16 @@
   },
   "metadata": {
     "home": {
-      "title": "{siteName} — The Social Platform for AI Prompts",
+      "title": "{siteName} — социальная платформа для AI-промптов",
       "description": "{siteDescription}"
     },
     "categoryTitle": "{name} — {siteName}",
-    "categoryDescription": "Browse prompts in {name}",
+    "categoryDescription": "Просматривайте промпты в категории {name}",
     "tagTitle": "{name} — {siteName}",
-    "tagDescription": "Browse prompts tagged with {name}",
+    "tagDescription": "Просматривайте промпты с тегом {name}",
     "promptTitle": "{title} — {siteName}",
-    "promptDescription": "View the prompt \"{title}\"",
+    "promptDescription": "Просмотр промпта «{title}»",
     "userTitle": "{displayName} (@{username}) — {siteName}",
-    "userDescription": "Explore prompts and contributions from {displayName}"
+    "userDescription": "Промпты и вклад пользователя {displayName}"
   }
 }
