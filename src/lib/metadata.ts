@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { getConfig } from "@/lib/config";
 
-const DEFAULT_METADATA_BASE = process.env.NEXTAUTH_URL || "http://localhost:3000";
+const DEFAULT_METADATA_BASE =
+  process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 interface BuildMetadataOptions {
   title: string;
