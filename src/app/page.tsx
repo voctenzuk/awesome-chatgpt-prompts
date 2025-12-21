@@ -47,6 +47,9 @@ export default async function HomePage() {
   const logoUrl = buildLocalizedUrl(config.branding.logo, locale, headersList);
   const logoDarkUrl = buildLocalizedUrl(config.branding.logoDark || config.branding.logo, locale, headersList);
   const organizationImageUrls = logoDarkUrl === logoUrl ? [logoUrl] : [logoUrl, logoDarkUrl];
+  const socialLinks = (config.branding.socialLinks ?? [])
+    .filter(Boolean)
+    .map((link) => buildLocalizedUrl(link, locale, headersList));
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -54,18 +57,21 @@ export default async function HomePage() {
         "@type": "Organization",
         "@id": `${siteUrl}#organization`,
         name: config.branding.name,
+        description: config.branding.description,
         url: siteUrl,
         logo: {
           "@type": "ImageObject",
           url: logoUrl,
         },
         image: organizationImageUrls,
+        ...(socialLinks.length ? { sameAs: socialLinks } : {}),
       },
       {
         "@type": "WebSite",
         "@id": `${siteUrl}#website`,
         url: siteUrl,
         name: config.branding.name,
+        description: config.branding.description,
         publisher: {
           "@id": `${siteUrl}#organization`,
         },
