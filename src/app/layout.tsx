@@ -10,7 +10,9 @@ import { getConfig } from "@/lib/config";
 import { isRtlLocale } from "@/lib/i18n/config";
 import "./globals.css";
 
-export const METADATA_BASE = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
+export const METADATA_BASE = new URL(
+  process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
+);
 
 const inter = Inter({
   subsets: ["latin"],

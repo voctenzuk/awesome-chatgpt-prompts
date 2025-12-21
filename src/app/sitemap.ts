@@ -4,7 +4,7 @@ import { getConfig } from "@/lib/config";
 import { getPromptUrl } from "@/lib/urls";
 
 function getBaseUrl(): URL {
-  return new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
+  return new URL(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000");
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
