@@ -41,6 +41,11 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: METADATA_BASE,
     title,
     description,
+    alternates: {
+      types: {
+        "application/rss+xml": new URL("/feed.xml", METADATA_BASE).toString(),
+      },
+    },
     icons: {
       icon: [
         { url: logo, media: "(prefers-color-scheme: light)" },
