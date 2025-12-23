@@ -67,13 +67,15 @@ export async function buildLocalizedMetadata({
       : [{ url: image.url, width: image.width, height: image.height }]
     : [{ url: "/og.png", width: 1200, height: 630 }];
 
+  const defaultLocaleUrl = languages[config.i18n.defaultLocale];
+
   return {
     title,
     description,
     alternates: {
       canonical: canonicalUrl.toString(),
       languages: {
-        "x-default": new URL(pathname === "/" ? "/" : pathname, metadataBase).toString(),
+        "x-default": defaultLocaleUrl ?? new URL(pathname === "/" ? "/" : pathname, metadataBase).toString(),
         ...languages,
       },
     },
