@@ -7,7 +7,7 @@ import { ArrowRight, Star, Heart, Trophy, Users, HeartHandshake, Code, Lock, Bui
 import { auth } from "@/lib/auth";
 import { getConfig } from "@/lib/config";
 import { buildLocalizedMetadata } from "@/lib/metadata";
-import { buildLocalizedUrl } from "@/lib/seo";
+import { buildBaseUrl, buildLocalizedUrl } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { DiscoveryPrompts } from "@/components/prompts/discovery-prompts";
 import { HeroPromptInput } from "@/components/prompts/hero-prompt-input";
@@ -43,6 +43,7 @@ export default async function HomePage() {
   const session = await auth();
   const config = await getConfig();
   const headersList = headers();
+  const baseUrl = buildBaseUrl(headersList);
   const siteUrl = buildLocalizedUrl("/", locale, headersList);
   const logoUrl = buildLocalizedUrl(config.branding.logo, locale, headersList);
   const logoDarkUrl = buildLocalizedUrl(config.branding.logoDark || config.branding.logo, locale, headersList);
@@ -55,10 +56,10 @@ export default async function HomePage() {
     "@graph": [
       {
         "@type": "Organization",
-        "@id": `${siteUrl}#organization`,
+        "@id": `${baseUrl}#organization`,
         name: config.branding.name,
         description: config.branding.description,
-        url: siteUrl,
+        url: baseUrl,
         logo: {
           "@type": "ImageObject",
           url: logoUrl,
@@ -73,7 +74,7 @@ export default async function HomePage() {
         name: config.branding.name,
         description: config.branding.description,
         publisher: {
-          "@id": `${siteUrl}#organization`,
+          "@id": `${baseUrl}#organization`,
         },
         potentialAction: {
           "@type": "SearchAction",
